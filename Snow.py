@@ -1,5 +1,5 @@
 import random as r
-import sys, curses, time
+import sys, curses, datetime, time
 '''
 TODO:
 snowman
@@ -7,6 +7,22 @@ clock?
 trees
 debug wind force?
 '''
+
+tree = """
+              v .   ._, |_  .,
+           `-._\/  .  \ /    |/_
+               \\  _\, y | \//
+         _\_.___\\, \\/ -.\||
+           `7-,--.`._||  / / ,
+           /'     `-. `./ / |/_.'
+                     |    |//
+                     |_    /
+                     |-   |
+                     |   =|
+                     |    |
+-..----._.---.___---/ ,  . \--._"""
+
+numbers = []
 
 class Snow:
 	def __init__(self, max_y, max_x):
@@ -17,9 +33,7 @@ class Snow:
 		self.wind = r.randint(-1,1)
 
 
-
 def main():
-
 
 	# Configure window
 	stdscr = curses.initscr()
@@ -48,6 +62,7 @@ def main():
 
 		for y in range(0,max_y):
 			temp.append(" ")
+
 		background.append(temp)
 
 
@@ -58,7 +73,21 @@ def main():
 		for i in range(0,100):
 			snowflakes.append(Snow(max_y,max_x))
 
+		# Draw the background at first
+		for x in range(0,max_x-1):
+			for y in range(0,max_y-1):
+				stdscr.addch(y,x, background[x][y])
+		# Some error here???
+
 		while 1:
+			# Draw the ground
+			stdscr.addnstr(max_y-2,0,ground*100,max_x)
+
+			# Draw the tree
+			stdscr.addstr(max_y-14, max_x-50, tree)
+
+			# Need to replace these with an overall back. drawing
+
 			for s in snowflakes:
 
 				'''
@@ -85,8 +114,9 @@ def main():
 				# Draw new snowflake position
 				stdscr.addch(s.y, s.x, s.sprite)
 
-			# Draw the ground
-			stdscr.addnstr(max_y-2,0,ground*100,max_x)
+			# Draw the time
+			time_raw = datetime.datetime.now().strftime("%I:%M:%S")
+			stdscr.addstr(int(max_y/2), int(max_x/2)-8, str(time_raw))
 
 			# For slower computers this line can be commented out
 			time.sleep(0.1)
